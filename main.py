@@ -1,4 +1,5 @@
 from audioop import mul
+from ipaddress import collapse_addresses
 from nis import cat
 
 
@@ -24,10 +25,25 @@ def main():
         multiPlayerMode()
 
 def singlePlayerMode():
-    print("Welcome to single player")
+    arr = initializeGrid()
+    printGrid(arr)
 
 def multiPlayerMode():
     print("Welcome to multiplayer")
+
+def initializeGrid():
+    arr = []
+    rows, cols = (3,3)
+    for i in range(rows):
+        arr.append([(j + (i*3)) for j in range(cols)])
+    return arr
+
+def printGrid(arr):
+    for i in arr:
+        print("|", end=" ")
+        for j in i:
+            print(str(j) + " |", end=" ")
+        print()
 
 if __name__ == "__main__":
     main()
