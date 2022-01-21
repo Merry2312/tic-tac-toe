@@ -1,6 +1,7 @@
 from audioop import mul
 from ipaddress import collapse_addresses
 from nis import cat
+from random import randrange
 
 board = []
 playingSinglePlayer = False
@@ -28,6 +29,7 @@ def main():
 
 def singlePlayerMode():
     '''Starts a single player game against the computer'''
+    global playingSinglePlayer
     playingSinglePlayer = True
     global player1Turn
     initializeGrid()
@@ -36,7 +38,10 @@ def singlePlayerMode():
     while (checkWin() is False):
         if player1Turn is True:
             location = input("It is your turn! Pick a move:")
-            print(location)
+            while playMove(location) is False:
+                location = input("Invalid move. Please pick a different move:")
+            printGrid(board)
+            print()
             player1Turn = False
         else:
             computerTurn()
@@ -48,11 +53,32 @@ def multiPlayerMode():
     playingSinglePlayer = False
     print("Welcome to multiplayer")
 
+def playMove(location):
+
+    row = int(location) // 3
+    col = int(location) - (3 * (row))
+
+    if validateMove(row, col) is False:
+        return False
+
+    if player1Turn:
+        board[row][col] = "O"
+    else:
+        board[row][col] = "X"
+    
+    return True
+
+def validateMove(row, col):
+    if (board[row][col] == "O" or board[row][col] == "X"):
+        return False
+    else:
+        return True
+
 def initializeGrid():
     '''Sets up the initial board'''
     rows, cols = (3,3)
     for i in range(rows):
-        board.append([(j + (i*3)) for j in range(cols)])
+        board.append([str(j + (i*3)) for j in range(cols)])
     return board
 
 def printGrid(arr):
@@ -105,7 +131,11 @@ def foundWinner(token):
 
 def computerTurn():
     '''Computer plays a random move'''
-    print("Computer would go")
+    location = randrange(9)
+    while playMove(location) is False:
+        location = randrange(9)
+    printGrid(board)
+    print()
 
 
 if __name__ == "__main__":
