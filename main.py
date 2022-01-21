@@ -1,4 +1,5 @@
 from audioop import mul
+from glob import glob
 from ipaddress import collapse_addresses
 from nis import cat
 from random import randrange
@@ -6,6 +7,7 @@ from random import randrange
 board = []
 playingSinglePlayer = False
 player1Turn = True #Player 1 is always O's
+turnsPlayed = 0
 
 def main():
     print("Welcome to Tic-Tac-Toe")
@@ -30,8 +32,8 @@ def main():
 def singlePlayerMode():
     '''Starts a single player game against the computer'''
     global playingSinglePlayer
-    playingSinglePlayer = True
     global player1Turn
+    playingSinglePlayer = True
     initializeGrid()
     printGrid(board)
 
@@ -50,8 +52,34 @@ def singlePlayerMode():
 
 def multiPlayerMode():
     '''Starts a multiplayer game between two opponents'''
-    playingSinglePlayer = False
     print("Welcome to multiplayer")
+
+    global playingSinglePlayer
+    global player1Turn
+    global turnsPlayed
+    playingSinglePlayer = False
+    initializeGrid()
+    printGrid(board)
+
+    while (checkWin() is False):
+        turnsPlayed += 1
+        if turnsPlayed > 9:
+            print("Draw")
+            break
+        if player1Turn is True:
+            location = input("Player 1's your turn! Pick a move:")
+            while playMove(location) is False:
+                location = input("Invalid move. Please pick a different move:")
+            printGrid(board)
+            print()
+            player1Turn = False
+        else:
+            location = input("Player 2's turn! Pick a move:")
+            while playMove(location) is False:
+                location = input("Invalid move. Please pick a different move:")
+            printGrid(board)
+            print()
+            player1Turn = True
 
 def playMove(location):
 
@@ -113,7 +141,7 @@ def checkWin():
     if board[0][2] == board[1][1] and board[0][0] == board[2][0]:
             foundWinner(board[0][2])
             return True
-
+    
     return False
 
 def foundWinner(token):
